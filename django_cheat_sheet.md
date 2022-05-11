@@ -15,6 +15,7 @@
 - [Django Girls tutorial](https://tutorial.djangogirls.org/en/) - has installation for everything, bootstrap, css, deploying on gitub/pythonanywhere
 - [Giant one](https://github.com/entirelymagic/Programming-Cheat-Sheet#41-cheat-sheet) that includes python, docker, other stuff
 - [Installation on windows](https://www.stanleyulili.com/django/how-to-install-django-on-windows/ ) including venv
+- [Puttin on Github](https://www.javatpoint.com/django-deploy-on-github)
 
 ## Start the project + app
 In shell:
@@ -39,8 +40,10 @@ project/
 In `settings.py`:
 - Add app to `INSTALLED_APPS` - just `'appName'`
 - Under “build paths” add: 
-    - `TEMPLATES_DIR = BASE_DIR / 'templates'`  
-    - `STATIC_DIR = BASE_DIR / 'static'`
+    ```python
+    TEMPLATES_DIR = BASE_DIR / 'templates'
+    STATIC_DIR = BASE_DIR / 'static'
+    ```
 - Under `TEMPLATES`, `DIRS`: add `TEMPLATES_DIR`
 - Under static section: add `STATICFILES_DIRS = [STATIC_DIR]`
 
@@ -124,7 +127,11 @@ Get MySQL going, create the database
 - MySQL should be running automatically
  - Open workbench 
     - Click “create new sql tab” (top left)
-    - Run this command: `create database employeedb;`
+    - Run these commands: 
+        ```sql
+        create database employeedb;
+        use employeedb;
+        ```
 - In `settings.py`, under databases
     ```python
     'ENGINE': 'django.db.backends.mysql',
@@ -132,10 +139,13 @@ Get MySQL going, create the database
     'USER': 'root',
     'PASSWORD': 'passwordgoeshere'
     ```
+    - Change your password [here!](https://dev.mysql.com/doc/mysql-windows-excerpt/8.0/en/resetting-permissions-windows.html)
 - Validate in shell (don’t have to be running the server)
     - `python manage.py shell`
     - `from django.db import connection`
-    - `c = connection.cursor()` <- If this exists, you’re good
+    - `c = connection.cursor()` <- If this exists, you’re good - if not you have to fix it then restart the shell
+- To see what MySQL is calling your table: run `show tables` and it's at the bottom.
+- Then you can see what's in it: `select * from table_name`
 
 Create the Model
 - Go to `models.py` in the app
@@ -145,11 +155,12 @@ Create the Model
     firstName = models.CharField(max_length=30)
     salary = models.FloatField()
     ```
-- Back to shell: do these every time you change the model or db 
-    - prepare to migrate: `python manage.py makemigrations`
-        - That creates a migrations folder under the app + sql code
-     - If you wanna see stuff (not necessary): `python manage.py sqlmigrate empApp 0001`
-    - Migrate/execute the SQL and stuff: `python manage.py migrate`
+
+Migrate! (Do every time you change the model or db)
+- prepare to migrate: `python manage.py makemigrations`
+    - That creates a migrations folder under the app + sql code
+    - If you wanna see stuff (not necessary): `python manage.py sqlmigrate empApp 0001`
+- Migrate/execute the SQL and stuff: `python manage.py migrate`
 - Then you can go to mysql workbench and play around with the data
     - Select the db: `use employeedb;`
     - `show tables;` (shows you all the admin tables, the one you made is at the end) - it will be called something like empApp_employee)
@@ -212,6 +223,7 @@ Read operations
         - To ignore case though: `from django.db.models.functions import Lower`
         - Make lowercase: `emps = Employee.objects.all().order_by(Lower('firstName'))`
         - The entry it returns won’t be all lowercase - it’ll be the same
+    - Make them randomly ordered! `ex = Exercise.objects.order_by('?')`
 
 Create operations
 - Check how many entries in the db: `Employee.objects.all().count()`
